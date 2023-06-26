@@ -1,20 +1,18 @@
 node {
     stage('Build') {
-        node {
-            docker.image('python:2-alpine').inside {
-                sh 'python -m py_compile ./sources/add2vals.py ./sources/calc.py'
-            }
+        docker.image('python:2-alpine').inside {
+            checkout scm
+            sh 'python -m py_compile sources/add2vals.py sources/calc.py'
         }
     }
     stage('Test') {
-        node {
-            docker.image('qnib/pytest').inside {
-            sh 'py.test --verbose --junit-xml ./test-reports/results.xml ./sources/test_calc.py'
-            }
-            post {
-                always {
-                    junit './test-reports/results.xml'
-                }
+        docker.image('qnib/pytest').inside {
+            checkout scm
+            sh 'py.test --verbose --junit-xml test-reports/results.xml sources/test_calc.py'
+        }
+        post {
+            always {
+                junit 'test-reports/results.xml'
             }
         }
     }
