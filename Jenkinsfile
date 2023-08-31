@@ -14,8 +14,10 @@ node {
     }
     stage('Deliver') {
         docker.image('cdrx/pyinstaller-linux:python2').inside {
-            checkout scm
-            sh 'pyinstaller --onefile sources/add2vals.py'
+	    script {
+                checkout scm
+                sh 'pyinstaller --onefile sources/add2vals.py'
+            }
         }
     }        
 }
