@@ -12,11 +12,21 @@ node {
             junit 'test-reports/results.xml'
         }
     }
-    stage('Deliver'){
-        docker.image('cdrx/pyinstaller-linux:python2').inside {
-	    checkout scm
-            sh 'pyinstaller --onefile sources/add2vals.py'
-            archiveArtifacts 'dist/add2vals'
+    stage('Deliver') {
+        agent {
+            docker {
+                image 'cdrx/pyinstaller-linux:python2'
+            }
+        }
+        steps {
+            script {
+                sh 'pyinstaller --onefile sources/add2vals.py'
+            }
+        }
+        post {
+            success {
+                archiveArtifacts 'dist/add2vals'
+            }
         }
     }
 }
